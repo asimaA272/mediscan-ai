@@ -14,6 +14,9 @@ check_keys()
 
 app = FastAPI(title="MediScan AI", version="1.0.0")
 
+# allow_origin_regex matches ANY Vercel preview/production URL automatically,
+# so you never need to update this when Vercel generates a new random URL.
+# It also allows your local dev servers (localhost on common Vite ports).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -25,6 +28,7 @@ app.add_middleware(
         "http://localhost:5175",
         "http://127.0.0.1:5175",
     ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
