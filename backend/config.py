@@ -41,7 +41,7 @@ def _load_gemini_keys() -> list[str]:
 
 
 def _key_valid(key: str) -> bool:
-    return bool(key and len(key) > 10 and (key.startswith("AIza") or key.startswith("AQ.")))
+    return bool(key and len(key) > 10 and (key.startswith("AIza") or key.startswith("AQ")))
 
 
 GEMINI_API_KEYS = _load_gemini_keys()
