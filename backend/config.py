@@ -6,7 +6,7 @@ Every other file imports keys FROM HERE — never read os.getenv() elsewhere.
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=False)
 
 
 def _strip_quotes(value: str) -> str:
