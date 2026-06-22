@@ -6,6 +6,7 @@ Gemini (FREE tier), and also returns a simple detected "emotion" label
 based on the message, which the frontend displays in the top-right
 mood indicator.
 """
+import traceback
 from fastapi import APIRouter, HTTPException
 from config import is_valid_gemini_key
 from schemas import ChatRequest, ChatResponse
@@ -54,7 +55,13 @@ def chat(req: ChatRequest):
             )
         )
     except Exception as e:
-        raise HTTPException(status_code=502, detail=f"AI service error: {e}")
+        # TEMPORARY: print full traceback to Render logs so we can see the
+        # exact failure reason, and return the real error message in the
+        # response instead of a generic 502 so it's visible in the chat UI too.
+        print("=== CHAT ENDPOINT ERROR ===")
+        traceback.print_exc()
+        print("=== END ERROR ===")
+        return ChatResponse(reply=f"[DEBUG] Chat failed: {type(e).__name__}: {e}")
 
 
 @router.get("/chat/emotion")
