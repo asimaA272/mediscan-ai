@@ -6,7 +6,6 @@ Gemini (FREE tier), and also returns a simple detected "emotion" label
 based on the message, which the frontend displays in the top-right
 mood indicator.
 """
-import traceback
 from fastapi import APIRouter, HTTPException
 from config import is_valid_gemini_key
 from schemas import ChatRequest, ChatResponse
@@ -38,8 +37,8 @@ def chat(req: ChatRequest):
     if not is_valid_gemini_key():
         return ChatResponse(
             reply=(
-                "Gemini API keys are not configured. "
-                "Add GEMINI_API_KEY_1, _2, and _3 to backend/.env from https://aistudio.google.com/app/apikey"
+                "The AI assistant isn't configured yet. "
+                "Please contact the administrator to set up the service."
             )
         )
 
@@ -49,19 +48,14 @@ def chat(req: ChatRequest):
     except GeminiKeysExhaustedError:
         return ChatResponse(
             reply=(
-                "All 3 Gemini API keys have hit their free quota for now. "
-                "Key rotation is active - please wait a few minutes and try again, "
-                "or add fresh keys to GEMINI_API_KEY_1/2/3 in backend/.env."
+                "I'm getting a lot of requests right now and have hit my usage limit. "
+                "Please wait a few minutes and try again."
             )
         )
-    except Exception as e:
-        # TEMPORARY: print full traceback to Render logs so we can see the
-        # exact failure reason, and return the real error message in the
-        # response instead of a generic 502 so it's visible in the chat UI too.
-        print("=== CHAT ENDPOINT ERROR ===")
-        traceback.print_exc()
-        print("=== END ERROR ===")
-        return ChatResponse(reply=f"[DEBUG] Chat failed: {type(e).__name__}: {e}")
+    except Exception:
+        return ChatResponse(
+            reply="Sorry, I ran into a problem answering that. Please try again in a moment."
+        )
 
 
 @router.get("/chat/emotion")
